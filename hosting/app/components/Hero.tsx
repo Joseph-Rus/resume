@@ -1,6 +1,18 @@
 // components/Hero.tsx
-import Image from 'next/image';
+"use client";
+
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the vanilla three.js viewer
+const VanillaModelViewer = dynamic(() => import('./VanilliaModelViewer'), { 
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="text-6xl font-bold text-orange-500">JR</div>
+    </div>
+  )
+});
 
 const Hero = () => {
   return (
@@ -41,14 +53,9 @@ const Hero = () => {
           </div>
           
           <div className="w-full md:w-1/2 flex justify-center relative">
-            <div className="relative w-72 h-72 md:w-96 md:h-96">
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 rounded-full opacity-20"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                {/* Replace with your profile picture or avatar */}
-                <div className="w-64 h-64 md:w-80 md:h-80 bg-gray-800 rounded-full flex items-center justify-center text-6xl font-bold text-orange-500">
-                  JR
-                </div>
-              </div>
+            {/* 3D Model Container - no borders or background */}
+            <div className="relative w-80 h-80 md:w-96 md:h-96">
+              <VanillaModelViewer />
             </div>
           </div>
         </div>

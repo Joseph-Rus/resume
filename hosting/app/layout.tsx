@@ -1,24 +1,24 @@
-// components/Layout.tsx
-import Head from 'next/head';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+// app/layout.tsx
+import './style/global.css';
+import { Inter } from 'next/font/google';
 
-const Layout = ({ children }) => {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Head>
-        <title>Joey Russell | Software Developer</title>
-        <meta name="description" content="Portfolio website of Joey Russell, Software Developer" />
-        <link rel="icon" href="/favicon.ico" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-      </Head>
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        {children}
-      </main>
-      <Footer />
-    </div>
-  );
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'Joey Russell | Software Developer',
+  description: 'Personal portfolio website of Joey Russell, Software Developer',
 };
 
-export default Layout;
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className="scroll-smooth">
+      <body className={`${inter.className} bg-gray-900 text-white`}>
+        {children}
+      </body>
+    </html>
+  );
+}

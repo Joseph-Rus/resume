@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pink Blob Effect</title>
+  <style>
+    /*--------------------
+    Body
+    --------------------*/
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    body {
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffd2c1, #f9d0d3);
+    }
+    .scene {
+      position: absolute;
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <canvas class="scene" id="bubble"></canvas>
+  
+  <!-- Load Three.js and noise library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+  
+  <script>
+    /*--------------------
+    Setup
+    --------------------*/
+    console.clear();
+    const canvas = document.querySelector('#bubble');
+    let width = canvas.offsetWidth,
+        height = canvas.offsetHeight;
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: true,
+      alpha: true
+    });
+    const scene = new THREE.Scene();
+    let camera;
+
+    const setup = () => {
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(width, height);
+      renderer.setClearColor(0xffd2c1, 0); // Transparent background to let CSS gradient show
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMapSoft = true;
+
+      scene.fog = new THREE.Fog(0xffd2c1, 10, 950); // Match fog to background color
+
+      const aspectRatio = width / height;
+      const fieldOfView = 100;
+      const nearPlane = 0.1;
+      const farPlane = 10000;
+      camera = new THREE.PerspectiveCamera(
+        fieldOfView,
+        aspectRatio,
+        nearPlane,
+        farPlane
+      );
+      camera.position.x = 0;
+      camera.position.y = 0;
+      camera.position.z = 300;
+    }
+    setup();
+
+    /*--------------------
+    Lights
+    --------------------*/
+    let hemisphereLight, shadowLight, light2, light3;
+    const createLights = () => {
+      hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xffd2c1, 0.5)
+      
+      // Warmer light colors for the pink theme
+      shadowLight = new THREE.DirectionalLight(0xff9a8b, 0.4);
+      shadowLight.position.set(0, 450, 350);
+      shadowLight.castShadow = true;
+
+      shadowLight.shadow.camera.left = -650;
+      shadowLight.shadow.camera.right = 650;
+      shadowLight.shadow.camera.top = 650;
+      shadowLight.shadow.camera.bottom = -650;
+      shadowLight.shadow.camera.near = 1;
+      shadowLight.shadow.camera.far = 1000;
+
+      shadowLight.shadow.mapSize.width = 4096;
+      shadowLight.shadow.mapSize.height = 4096;
+      
+      light2 = new THREE.DirectionalLight(0xffb9b9, 0.25);
+      light2.position.set(-600, 350, 350);
+      
+      light3 = new THREE.DirectionalLight(0xeec0c6, 0.15);
+      light3.position.set(0, -250, 300);
+
+      scene.add(hemisphereLight);  
+      scene.add(shadowLight);
+      scene.add(light2);
+      scene.add(light3);
+    }
+    createLights();
+
+    /*--------------------
+    Bubble
+    --------------------*/
+    const vertex = width > 575 ? 80 : 40;
+    // Create a geometry using BufferGeometry (since vertices is deprecated in newer Three.js)
+    const bubbleGeometry = new THREE.SphereGeometry(120, vertex, vertex);
+    let bubble;
+    
+    // Convert BufferGeometry to have similar functionality as old Geometry
+    const createBubble = () => {
+      // Save original positions
+      const positionAttribute = bubbleGeometry.getAttribute('position');
+      const vertices = [];
+      
+      // Store original positions
+      for (let i = 0; i < positionAttribute.count; i++) {
+        const vertex = new THREE.Vector3();
+        vertex.fromBufferAttribute(positionAttribute, i);
+        
+        // Store original position
+        vertices.push({
+          index: i,
+          original: vertex.clone()
+        });
+      }
+      
+      // Create pink material for bubble
+      const bubbleMaterial = new THREE.MeshStandardMaterial({
+        color: 0xd782a3,            // Pinkish base color
+        emissive: 0xb682d7,         // Purplish glow
+        emissiveIntensity: 0.4,
+        roughness: 0.35,
+        metalness: 0.1,
+        side: THREE.FrontSide,
+      });
+      
+      bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial);
+      bubble.castShadow = true;
+      bubble.receiveShadow = false;
+      scene.add(bubble);
+      
+      return vertices;
+    }
+    const vertices = createBubble();
+
+    /*--------------------
+    Plane
+    --------------------*/
+    const createPlane = () => {
+      const planeGeometry = new THREE.PlaneGeometry(2000, 2000);
+      const planeMaterial = new THREE.ShadowMaterial({
+        opacity: 0.12  // More subtle shadow
+      });
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.position.y = -150;
+      plane.position.x = 0;
+      plane.position.z = 0;
+      plane.rotation.x = Math.PI / 180 * -90;
+      plane.receiveShadow = true;
+      scene.add(plane);
+    }
+    createPlane();
+
+    /*--------------------
+    Map (utility function)
+    --------------------*/
+    const map = (num, in_min, in_max, out_min, out_max) => {
+      return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
+
+    /*--------------------
+    Distance
+    --------------------*/
+    const distance = (a, b) => {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      return d;
+    }
+
+    /*--------------------
+    Mouse
+    --------------------*/
+    let mouse = new THREE.Vector2(0, 0);
+    const onMouseMove = (e) => {
+      gsap.to(mouse, {
+        duration: 0.8,
+        x: e.clientX || e.pageX || (e.touches && e.touches[0].pageX) || 0,
+        y: e.clientY || e.pageY || (e.touches && e.touches[0].pageY) || 0,
+        ease: "power2.out"
+      });
+    };
+    ['mousemove', 'touchmove'].forEach(event => {
+      window.addEventListener(event, onMouseMove);  
+    });
+
+    /*--------------------
+    Spring
+    --------------------*/
+    let spring = {
+      scale: 1
+    };
+    const clicking = {
+      down: () => {
+        gsap.to(spring, {
+          duration: 0.7,
+          scale: 0.75,
+          ease: "power3.out"
+        });
+      },
+      up: () => {
+        gsap.to(spring, {
+          duration: 0.9,
+          scale: 1,
+          ease: "elastic.out(1, 0.3)"
+        });
+      }
+    };
+    ['mousedown', 'touchstart'].forEach(event => {
+      window.addEventListener(event, clicking.down);
+    });
+    ['mouseup', 'touchend'].forEach(event => {
+      window.addEventListener(event, clicking.up);
+    });
+
+    /*--------------------
+    Resize
+    --------------------*/
+    let maxDist = distance(mouse, {x: width / 2, y: height / 2});
+    
+    const onResize = () => {
+      canvas.style.width = '';
+      canvas.style.height = '';
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix(); 
+      maxDist = distance(mouse, {x: width / 2, y: height / 2});
+      renderer.setSize(width, height);
+    }
+    let resizeTm;
+    window.addEventListener('resize', function(){
+      resizeTm = clearTimeout(resizeTm);
+      resizeTm = setTimeout(onResize, 200);
+    });
+
+    /*--------------------
+    Noise
+    --------------------*/
+    // Initialize SimplexNoise
+    const noise = new SimplexNoise();
+    
+    let dist = new THREE.Vector2(0, 0);
+    const updateVertices = (time) => {
+      dist = distance(mouse, {x: width / 2, y: height / 2});
+      dist /= maxDist;
+      dist = map(dist, 1, 0, 0, 1);
+      
+      const positionAttribute = bubbleGeometry.getAttribute('position');
+      
+      // Update each vertex
+      for (let i = 0; i < vertices.length; i++) {
+        const vertex = vertices[i];
+        const original = vertex.original;
+        
+        // Generate noise value
+        let perlin = noise.noise3D(
+          (original.x * 0.008) + (time * 0.0005),
+          (original.y * 0.008) + (time * 0.0005),
+          (original.z * 0.008)
+        );
+        
+        // Calculate distortion amount - more organic and fluid
+        let ratio = ((perlin * 0.35 * (dist + 0.2)) + 0.8);
+        
+        // Apply distortion to position
+        const newPos = original.clone().multiplyScalar(ratio);
+        
+        // Update the position in the buffer
+        positionAttribute.setXYZ(
+          vertex.index,
+          newPos.x,
+          newPos.y,
+          newPos.z
+        );
+      }
+      
+      positionAttribute.needsUpdate = true;
+      bubbleGeometry.computeVertexNormals();
+    }
+
+    /*--------------------
+    Animate
+    --------------------*/
+    const render = (a) => {
+      requestAnimationFrame(render);
+      
+      // More subtle rotation based on mouse
+      bubble.rotation.y = -1.5 + map(mouse.x, 0, width, 0, 3);
+      bubble.rotation.z = 1.5 + map(mouse.y, 0, height, 0, -3);
+      
+      // Apply scale from spring animation
+      bubble.scale.set(spring.scale, spring.scale, spring.scale);
+      
+      // Update vertices with noise
+      updateVertices(a);
+      
+      renderer.clear();
+      renderer.render(scene, camera);
+    }
+    
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+  </script>
+</body>
+</html>

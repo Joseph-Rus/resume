@@ -3,12 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Update CSS variables for a white (light) theme */
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 17, 24, 39;
-  --background-end-rgb: 17, 24, 39;
+  --foreground-rgb: 0, 0, 0;              /* Dark text color */
+  --background-start-rgb: 255, 255, 255;   /* White background */
+  --background-end-rgb: 255, 255, 255;     /* White background */
 }
 
+/* Apply the updated colors to the body */
+/* You can remove the gradient if you prefer a flat white background */
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -19,26 +22,27 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar for a light theme */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #f1f1f1; /* Light grey track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #f97316;
+  background: #888; /* Medium grey thumb */
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ea580c;
+  background: #555; /* Darker grey on hover */
 }
 
 /* Animations */
@@ -58,13 +62,19 @@ html {
   animation: float 6s ease-in-out infinite;
 }
 
-/* Custom elements */
+/* Custom grid for tech icons or any similar element */
 .tech-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1rem;
 }
 
+/* Optional: Adjusted radial gradient for a light theme */
+/* Feel free to tweak these values or remove if unnecessary */
 .radial-gradient {
-  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.2) 0%, rgba(17, 24, 39, 0) 70%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 123, 255, 0.1) 0%,
+    transparent 70%
+  );
 }

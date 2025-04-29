@@ -1,111 +1,81 @@
 import React from "react";
+import {
+  CodeBracketIcon,
+  ShieldCheckIcon,
+  GlobeAltIcon,
+  CommandLineIcon,
+  DocumentTextIcon,
+  ChartBarIcon,
+} from "@heroicons/react/24/outline";
+import { FaLock, FaShieldAlt, FaMicrochip } from "react-icons/fa";
 
 const Skills = () => {
-  // Example data with "level" added to each skill.
   const skillCategories = [
     {
       name: "Programming Languages",
       skills: [
-        { name: "C++", icon: "💻", level: 60, color: "bg-blue-600" },
-        { name: "C", icon: "💻", level: 40, color: "bg-blue-500" },
-        { name: "Java", icon: "☕", level: 70, color: "bg-orange-600" },
-        { name: "Python", icon: "🐍", level: 90, color: "bg-yellow-600" },
-        { name: "HTML", icon: "🌐", level: 95, color: "bg-red-500" },
-        { name: "JavaScript", icon: "🟨", level: 75, color: "bg-yellow-500" },
-        { name: "Node.js", icon: "🟢", level: 70, color: "bg-green-600" },
+        { name: "C++", icon: <CodeBracketIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "C", icon: <CodeBracketIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Java", icon: <CodeBracketIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Python", icon: <CodeBracketIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "HTML", icon: <GlobeAltIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "JavaScript", icon: <CodeBracketIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Node.js", icon: <CodeBracketIcon className="w-5 h-5 text-gray-600" /> },
       ],
     },
     {
       name: "Tools & Technologies",
       skills: [
-        { name: "AutoCAD", icon: "📐", level: 85, color: "bg-blue-500" },
-        { name: "SolidWorks", icon: "🔧", level: 90, color: "bg-gray-500" },
-        { name: "Linux", icon: "🐧", level: 80, color: "bg-black" },
-        { name: "Excel", icon: "📊", level: 75, color: "bg-green-700" },
+        { name: "AutoCAD", icon: <DocumentTextIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "SolidWorks", icon: <DocumentTextIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Linux", icon: <CommandLineIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Excel", icon: <ChartBarIcon className="w-5 h-5 text-gray-600" /> },
       ],
     },
     {
       name: "Cybersecurity",
       skills: [
-        { name: "Hack The Box", icon: "🔒", level: 70, color: "bg-green-600" },
-        { name: "Kali Linux", icon: "🐉", level: 65, color: "bg-blue-600" },
-        { name: "Penetration Testing", icon: "🛡️", level: 75, color: "bg-red-600" },
+        { name: "Hack The Box", icon: <FaLock className="w-5 h-5 text-gray-600" /> },
+        { name: "Kali Linux", icon: <CommandLineIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Penetration Testing", icon: <FaShieldAlt className="w-5 h-5 text-gray-600" /> },
       ],
     },
     {
       name: "Development",
       skills: [
-        { name: "Web Development", icon: "🌐", level: 90, color: "bg-indigo-600" },
-        { name: "Embedded Systems", icon: "🔌", level: 70, color: "bg-gray-600" },
+        { name: "Web Development", icon: <GlobeAltIcon className="w-5 h-5 text-gray-600" /> },
+        { name: "Embedded Systems", icon: <FaMicrochip className="w-5 h-5 text-gray-600" /> },
       ],
     },
   ];
 
-  const professionalSkills = [
-
-  ];
-
   return (
-    <section id="skills" className="py-20 bg-white text-black">
+    <section id="skills" className="py-20 bg-transparent text-gray-900">
       <div className="container mx-auto px-4">
-        {/* Section Title */}
-        <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
           My Skills
         </h2>
 
-        {/* Skill Categories */}
         {skillCategories.map((category, idx) => (
-          <div key={idx} className="mb-12">
-            <h3 className="text-xl font-semibold mb-4 text-gray-700">
+          <div key={idx} className="mb-10">
+            <h3 className="text-2xl font-semibold mb-6 text-gray-700">
               {category.name}
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-wrap gap-4">
               {category.skills.map((skill, sIdx) => (
-                <div key={sIdx}>
-                  {/* Skill row header (icon + name + percentage) */}
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">{skill.icon}</span>
-                      <span className="text-sm font-medium">{skill.name}</span>
-                    </div>
-                    <span className="text-sm font-medium">{skill.level}%</span>
-                  </div>
-                  {/* Progress bar container: unachieved portion is white */}
-                  <div className="w-full bg-white rounded-full h-2.5 border border-gray-300">
-                    {/* Progress bar fill: achieved portion is black */}
-                    <div
-                      className="bg-black h-2.5 rounded-full transition-all duration-500"
-                      style={{ width: `${skill.level}%` }}
-                    />
-                  </div>
+                <div
+                  key={sIdx}
+                  className="flex items-center space-x-2 bg-white shadow-sm hover:shadow-md transition p-3 rounded-lg border border-gray-200"
+                >
+                  {skill.icon}
+                  <span className="text-sm font-medium text-gray-800">
+                    {skill.name}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         ))}
-
-        {/* Professional Skills */}
-        <div className="mt-12">
-          <h3 className="text-xl font-semibold mb-4 text-gray-700">
-            Professional Skills
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {professionalSkills.map((skill, idx) => (
-              <div key={idx}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">{skill.name}</span>
-                  <span className="text-sm font-medium">{skill.level}%</span>
-                </div>
-                <div className="w-full bg-white rounded-full h-2.5 border border-gray-300">
-                  <div
-                    className="bg-black h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${skill.level}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

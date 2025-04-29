@@ -1,34 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Add scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      if (offset > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <nav className="bg-white py-6 border-b border-gray-200 shadow-sm">
+    <nav className={`navbar transition-all duration-300 ${scrolled ? 'py-3 shadow-md' : 'py-6'}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link href="/">
-            <span className="text-2xl font-bold text-gray-900">Joey Russell</span>
+            <span className="text-2xl font-bold text-primary-600">Joey<span className="text-dot">.</span></span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-10">
-          <Link href="/" className="text-gray-700 hover:text-blue-500 transition">
+          <Link href="/" className="text-gray-700 hover:text-primary-500 transition font-medium">
             Home
           </Link>
-          <Link href="#about" className="text-gray-700 hover:text-blue-500 transition">
+          <Link href="#about" className="text-gray-700 hover:text-primary-500 transition font-medium">
             About
           </Link>
-          <Link href="#projects" className="text-gray-700 hover:text-blue-500 transition">
+          <Link href="#projects" className="text-gray-700 hover:text-primary-500 transition font-medium">
             Projects
           </Link>
-          <Link href="#experience" className="text-gray-700 hover:text-blue-500 transition">
+          <Link href="#experience" className="text-gray-700 hover:text-primary-500 transition font-medium">
             Experience
           </Link>
-          <Link href="#contact" className="text-gray-700 hover:text-blue-500 transition">
+          <Link href="#contact" className="text-gray-700 hover:text-primary-500 transition font-medium">
             Contact
           </Link>
         </div>
@@ -37,7 +55,8 @@ const Navbar = () => {
         <div className="md:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex items-center justify-center p-2 border border-gray-300 rounded-md text-gray-700 hover:text-blue-500 hover:border-blue-500 focus:outline-none transition"
+            className="flex items-center justify-center p-2 border border-gray-300 rounded-md text-gray-700 hover:text-primary-500 hover:border-primary-500 focus:outline-none transition"
+            aria-label="Toggle menu"
           >
             <svg
               className="h-6 w-6"
@@ -67,39 +86,39 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-gray-100 py-4">
+        <div className="md:hidden bg-white py-4 border-t border-gray-100 shadow-sm">
           <div className="container mx-auto px-4 flex flex-col space-y-3">
             <Link
               href="/"
-              className="text-gray-700 hover:text-blue-500 transition py-2"
+              className="text-gray-700 hover:text-primary-500 transition py-2 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
               Home
             </Link>
             <Link
               href="#about"
-              className="text-gray-700 hover:text-blue-500 transition py-2"
+              className="text-gray-700 hover:text-primary-500 transition py-2 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
               About
             </Link>
             <Link
               href="#projects"
-              className="text-gray-700 hover:text-blue-500 transition py-2"
+              className="text-gray-700 hover:text-primary-500 transition py-2 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
               Projects
             </Link>
             <Link
               href="#experience"
-              className="text-gray-700 hover:text-blue-500 transition py-2"
+              className="text-gray-700 hover:text-primary-500 transition py-2 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
               Experience
             </Link>
             <Link
               href="#contact"
-              className="text-gray-700 hover:text-blue-500 transition py-2"
+              className="text-gray-700 hover:text-primary-500 transition py-2 font-medium"
               onClick={() => setMobileMenuOpen(false)}
             >
               Contact

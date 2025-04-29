@@ -43,7 +43,7 @@ const Experience = () => {
   ];
 
   return (
-    <section id="experience" className="py-20 bg-white text-gray-900">
+    <section id="experience" className="py-20 bg-transparent text-gray-900">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center">
           Experience
@@ -82,8 +82,8 @@ const Experience = () => {
                     <div className="text-orange-500 mb-2">
                       {exp.company} | {exp.location}
                     </div>
-                    <div className="text-sm text-gray-600">{exp.year}</div>
-                    <p className="mt-3 text-gray-500">{exp.description}</p>
+                    <div className="text-sm text-black-600">{exp.year}</div>
+                    <p className="mt-3 text-black-500">{exp.description}</p>
                   </div>
                 </div>
               );
@@ -104,8 +104,8 @@ const Experience = () => {
                 <div className="text-blue-500 mb-2">
                   {education[0].institution} | {education[0].location}
                 </div>
-                <div className="text-sm text-gray-600">{education[0].year}</div>
-                <p className="mt-3 text-gray-500">{education[0].details}</p>
+                <div className="text-sm text-black-600">{education[0].year}</div>
+                <p className="mt-3 text-black-500">{education[0].details}</p>
               </div>
               <div className="hidden md:block md:w-1/2 md:pl-8"></div>
             </div>

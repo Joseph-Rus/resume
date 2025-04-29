@@ -46,7 +46,7 @@ const Projects = () => {
   const repos = data.filter((repo) => !repo.fork);
 
   return (
-    <section id="projects" className="py-20 bg-white text-gray-900">
+    <section id="projects" className="py-20 bg-transparent text-gray-900">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold mb-16 text-center">
           Projects

@@ -3,23 +3,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Update CSS variables for a white (light) theme */
 :root {
-  --foreground-rgb: 0, 0, 0;              /* Dark text color */
-  --background-start-rgb: 255, 255, 255;   /* White background */
-  --background-end-rgb: 255, 255, 255;     /* White background */
+  /* Primary palette - Blues */
+  --color-primary-50: 240, 249, 255;   /* Lightest blue - #F0F9FF */
+  --color-primary-100: 224, 242, 254;  /* #E0F2FE */
+  --color-primary-200: 186, 230, 253;  /* #BAE6FD */
+  --color-primary-300: 125, 211, 252;  /* #7DD3FC */
+  --color-primary-400: 56, 189, 248;   /* #38BDF8 */
+  --color-primary-500: 14, 165, 233;   /* #0EA5E9 - Main blue */
+  --color-primary-600: 2, 132, 199;    /* #0284C7 */
+  --color-primary-700: 3, 105, 161;    /* #0369A1 */
+  --color-primary-800: 7, 89, 133;     /* #075985 */
+  --color-primary-900: 12, 74, 110;    /* #0C4A6E */
+  
+  /* Accent - Lavender/Purple (for blob) */
+  --color-accent-300: 196, 181, 253;   /* #C4B5FD */
+  --color-accent-400: 167, 139, 250;   /* #A78BFA */
+  --color-accent-500: 139, 92, 246;    /* #8B5CF6 */
+  
+  /* Text and base colors */
+  --color-text-primary: 17, 24, 39;    /* #111827 - Near black */
+  --color-text-secondary: 75, 85, 99;  /* #4B5563 - Dark gray */
+  --color-text-tertiary: 107, 114, 128; /* #6B7280 - Medium gray */
+  
+  /* Backgrounds */
+  --color-bg-primary: 255, 255, 255;   /* #FFFFFF - White */
+  --color-bg-secondary: 249, 250, 251; /* #F9FAFB - Off-white */
+  --color-bg-tertiary: 243, 244, 246;  /* #F3F4F6 - Light gray */
+  
+  /* Common gradients */
+  --gradient-blue-top: linear-gradient(180deg, rgba(224, 242, 254, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+  --gradient-blue-left: linear-gradient(90deg, rgba(224, 242, 254, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-/* Apply the updated colors to the body */
-/* You can remove the gradient if you prefer a flat white background */
+/* Base styles */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: rgb(var(--color-text-primary));
+  background-color: rgb(var(--color-bg-primary));
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, 
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 /* Smooth scrolling */
@@ -27,34 +49,128 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar for a light theme */
+/* Link styles */
+a {
+  color: rgb(var(--color-primary-600));
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: rgb(var(--color-primary-500));
+}
+
+/* Button styles */
+.btn {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-md font-medium transition-all duration-200;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600 hover:shadow-md;
+}
+
+.btn-outline {
+  @apply border border-gray-300 text-gray-800 hover:border-blue-500 hover:text-blue-500;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-soft {
+  background: linear-gradient(135deg, rgb(var(--color-primary-50)) 0%, rgb(var(--color-bg-primary)) 100%);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(135deg, rgb(var(--color-primary-100)) 0%, rgb(var(--color-primary-50)) 100%);
+}
+
+/* Blob accents */
+.blob-accent-1 {
+  position: absolute;
+  width: 40vw;
+  height: 40vw;
+  max-width: 600px;
+  max-height: 600px;
+  background: radial-gradient(circle at center, rgba(var(--color-primary-200), 0.3) 0%, rgba(var(--color-primary-100), 0.1) 70%);
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  filter: blur(40px);
+  z-index: -1;
+  animation: blob-move 25s infinite alternate ease-in-out;
+}
+
+.blob-accent-2 {
+  position: absolute;
+  width: 35vw;
+  height: 35vw;
+  max-width: 500px;
+  max-height: 500px;
+  background: radial-gradient(circle at center, rgba(var(--color-accent-300), 0.2) 0%, rgba(var(--color-accent-300), 0.05) 70%);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  filter: blur(40px);
+  z-index: -1;
+  animation: blob-move 30s infinite alternate-reverse ease-in-out;
+}
+
+/* Section styling */
+section {
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: rgb(var(--color-text-primary));
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden transition-all duration-300;
+}
+
+.card:hover {
+  @apply shadow-md border-gray-200;
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Light grey track */
+  background: rgb(var(--color-bg-tertiary));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888; /* Medium grey thumb */
-  border-radius: 5px;
+  background: rgb(var(--color-primary-300));
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Darker grey on hover */
+  background: rgb(var(--color-primary-400));
 }
 
 /* Animations */
-@keyframes float {
+@keyframes blob-move {
   0% {
-    transform: translateY(0px);
+    transform: translate(0, 0) scale(1) rotate(0deg);
   }
-  50% {
-    transform: translateY(-20px);
+  33% {
+    transform: translate(2%, 2%) scale(1.05) rotate(5deg);
+  }
+  66% {
+    transform: translate(-2%, -1%) scale(0.95) rotate(-5deg);
   }
   100% {
-    transform: translateY(0px);
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
   }
 }
 
@@ -62,19 +178,39 @@ html {
   animation: float 6s ease-in-out infinite;
 }
 
-/* Custom grid for tech icons or any similar element */
-.tech-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1rem;
+/* Responsive typography */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  h3 {
+    font-size: 1.5rem;
+  }
 }
 
-/* Optional: Adjusted radial gradient for a light theme */
-/* Feel free to tweak these values or remove if unnecessary */
-.radial-gradient {
-  background: radial-gradient(
-    circle at center,
-    rgba(0, 123, 255, 0.1) 0%,
-    transparent 70%
-  );
+/* Navbar-specific styling */
+.navbar {
+  @apply bg-white/90 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-100;
+}
+
+/* For the color dot in "Hello." styling */
+.text-dot {
+  @apply text-blue-500;
+}
+
+/* Glassmorphism effect for cards or containers */
+.glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+}
+
+/* Tech stack grid */
+.tech-grid {
+  @apply grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4;
+}
+
+.tech-item {
+  @apply flex flex-col items-center justify-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition;
 }

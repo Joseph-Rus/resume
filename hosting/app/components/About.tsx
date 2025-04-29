@@ -30,8 +30,8 @@ const About: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
     directionalLight.position.set(-5, 5, -5);
 
     scene.add(ambientLight);
@@ -92,7 +92,7 @@ const About: React.FC = () => {
     // Load GLTF model
     const loader = new GLTFLoader();
     loader.load(
-      './models/mainroom.glb',
+      './models/mainroomv2.glb',
       (gltf) => {
         gltf.scene.scale.set(0.5, 0.5, 0.5);
         gltf.scene.rotation.set(15 * (Math.PI / 180), 200 * (Math.PI / 180), 0);

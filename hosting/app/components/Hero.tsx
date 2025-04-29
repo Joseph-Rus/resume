@@ -8,104 +8,77 @@ const Hero = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    // 1) Don’t do any Three.js work on mobile
+    if (window.innerWidth < 768) return;
+  
     // Load scripts dynamically
     const loadScripts = async () => {
-      // Function to load a script and return a promise
-      const loadScript = (src) => {
-        return new Promise((resolve, reject) => {
+      const loadScript = (src: string) =>
+        new Promise<void>((resolve, reject) => {
           const script = document.createElement("script");
           script.src = src;
-          script.onload = () => resolve(undefined);
-          script.onerror = () =>
-            reject(new Error(`Failed to load script: ${src}`));
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
           document.head.appendChild(script);
         });
-      };
-
+  
       try {
-        // Load Three.js
-        await loadScript(
-          "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.159.0/three.min.js"
-        );
+        await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/0.159.0/three.min.js");
         console.log("Three.js loaded");
-
-        // Load SimplexNoise library (needed for organic deformation)
-        await loadScript(
-          "https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"
-        );
+  
+        await loadScript("https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js");
         console.log("SimplexNoise loaded");
-
-        // Load GSAP for animations
-        await loadScript(
-          "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"
-        );
-        await loadScript(
-          "https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"
-        );
+  
+        await loadScript("https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js");
+        await loadScript("https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js");
         console.log("GSAP loaded");
-
-        // Initialize the 3D blob
+  
         initBubble();
       } catch (error) {
         console.error("Error loading scripts:", error);
       }
     };
-
-    // Your initBubble function with improved smoothness and color updates
+  
+    // Your initBubble function with mobile‐guard
     const initBubble = () => {
+      // 2) If the container is hidden (e.g. on mobile), offsetWidth/offsetHeight will be 0
+      const w = containerRef.current?.offsetWidth;
+      const h = containerRef.current?.offsetHeight;
+      if (!w || !h) return;
+  
       if (!containerRef.current || typeof window.THREE === "undefined") {
         console.error("Container not found or THREE not loaded");
         return;
       }
-
-      // Clear any existing canvas
-      const existingCanvas = containerRef.current.querySelector("canvas");
-      if (existingCanvas) {
-        containerRef.current.removeChild(existingCanvas);
-      }
-
-      // Create a canvas element and append it to the container
+  
+      // Clear existing canvas
+      const existing = containerRef.current.querySelector("canvas");
+      if (existing) containerRef.current.removeChild(existing);
+  
+      // Create new canvas
       const canvas = document.createElement("canvas");
       canvas.id = "bubble";
+      canvas.style.position = "absolute";
       canvas.style.width = "100%";
       canvas.style.height = "100%";
-      canvas.style.position = "absolute";
       containerRef.current.appendChild(canvas);
-
-      console.clear();
+  
+      // Renderer + scene + camera setup
       let width = canvas.offsetWidth;
       let height = canvas.offsetHeight;
-      const renderer = new window.THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        alpha: true,
-      });
+      const renderer = new window.THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       const scene = new window.THREE.Scene();
-
-      // Declare camera
-      let camera;
-
+      let camera: any;
+  
       const setup = () => {
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(width, height);
-        // Update clear color to white for the light theme
         renderer.setClearColor(0xffffff, 0);
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = window.THREE.PCFSoftShadowMap; // Softer shadows
-
-        // Optional: You can tweak fog color to a very light gray
+        renderer.shadowMap.type = window.THREE.PCFSoftShadowMap;
         scene.fog = new window.THREE.Fog(0xffffff, 10, 950);
-
-        const aspectRatio = width / height;
-        const fieldOfView = 100;
-        const nearPlane = 0.1;
-        const farPlane = 10000;
-        camera = new window.THREE.PerspectiveCamera(
-          fieldOfView,
-          aspectRatio,
-          nearPlane,
-          farPlane
-        );
+  
+        camera = new window.THREE.PerspectiveCamera(100, width / height, 0.1, 10000);
         camera.position.set(0, 0, 300);
       };
       setup();
@@ -442,17 +415,17 @@ const Hero = () => {
               
               {/* Social icons */}
               <div className="flex items-center space-x-5 pt-4">
-                <a href="https://github.com/yourgithub" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary-600 transition-colors">
+                <a href="https://github.com/Joseph-Rus" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary-600 transition-colors">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
                   </svg>
                 </a>
-                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary-600 transition-colors">
+                <a href="https://www.linkedin.com/in/jbrussell11/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary-600 transition-colors">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
                 </a>
-                <a href="mailto:your.email@example.com" className="text-gray-600 hover:text-primary-600 transition-colors">
+                <a href="mailto:Josephbernard.russell@calbaptist.edu" className="text-gray-600 hover:text-primary-600 transition-colors">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                   </svg>
@@ -465,7 +438,7 @@ const Hero = () => {
             {/* Bubble Container with floating animation */}
             <div
               ref={containerRef}
-              className="w-80 h-80 md:w-96 md:h-96 relative animate-float"
+              className="hidden md:block w-80 h-80 md:w-96 md:h-96 relative animate-float"
               style={{
                 position: "relative",
                 overflow: "hidden",

@@ -20,7 +20,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://www.linkedin.com/public-profile/settings?trk=d_flagship3_profile_self_view_public_profile" 
+                href="https://www.linkedin.com/in/jbrussell11/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-black hover:text-blue-500 transition"

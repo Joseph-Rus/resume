@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Experience = () => {
   const experiences = [
@@ -42,6 +43,11 @@ const Experience = () => {
     },
   ];
 
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <section id="experience" className="py-20 bg-transparent text-gray-900">
       <div className="container mx-auto px-4">
@@ -57,9 +63,14 @@ const Experience = () => {
             {experiences.map((exp, index) => {
               const isEven = index % 2 === 0;
               return (
-                <div
+                <motion.div
                   key={index}
                   className="relative flex flex-col md:flex-row items-center"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  variants={itemVariants}
                 >
                   {/* Timeline dot */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 bg-white border-4 border-orange-500 rounded-full w-12 h-12 flex items-center justify-center shadow">
@@ -85,12 +96,19 @@ const Experience = () => {
                     <div className="text-sm text-black-600">{exp.year}</div>
                     <p className="mt-3 text-black-500">{exp.description}</p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
 
             {/* Education */}
-            <div className="relative flex flex-col md:flex-row items-center">
+            <motion.div
+              className="relative flex flex-col md:flex-row items-center"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: experiences.length * 0.2 }}
+              variants={itemVariants}
+            >
               {/* Timeline dot */}
               <div className="absolute left-1/2 transform -translate-x-1/2 bg-white border-4 border-blue-500 rounded-full w-12 h-12 flex items-center justify-center shadow">
                 <span className="text-blue-500 font-bold text-sm">EDU</span>
@@ -108,7 +126,7 @@ const Experience = () => {
                 <p className="mt-3 text-black-500">{education[0].details}</p>
               </div>
               <div className="hidden md:block md:w-1/2 md:pl-8"></div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -69,7 +69,7 @@ function frameCameraToModel(model) {
 // Load GLTF model
 const loader = new GLTFLoader();
 loader.load(
-  './models/mainroom.glb',
+  './models/mainroomv2.glb',
   (gltf) => {
     // 1. Scale
     gltf.scene.scale.set(0.5, 0.5, 0.5);
